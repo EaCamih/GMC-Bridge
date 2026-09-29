@@ -19,9 +19,11 @@ jobs:
           - os: windows-latest
             platform: windows
             icon: media-bridge.ico
+            ext: .exe
           - os: ubuntu-latest
             platform: linux
             icon: media-bridge.png
+            ext: ''
 
     steps:
       - name: Checkout code
@@ -59,10 +61,10 @@ jobs:
 
       - name: Create icons
         run: |
-          if ls *.png 1> /dev/null 2>&1; then
-            # Use the first PNG file found
-            png_file=$(ls *.png | head -n 1)
-            python scripts/create_icons.py "$png_file"
+          if [ -f "GMC-Bridge.png" ]; then
+            python scripts/create_icons.py GMC-Bridge.png
+          elif [ -f "media-bridge.png" ]; then
+            python scripts/create_icons.py media-bridge.png
           else
             echo "Warning: No PNG file found, building without icons"
             echo "To include icons, add a PNG file to the project root"
@@ -71,15 +73,15 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --noconfirm media-bridge.spec
+          python -m PyInstaller --noconfirm media-bridge.spec
 
       - name: Rename executable
         run: |
           if [ "${{ matrix.platform }}" = "windows" ]; then
-            mv dist/Media-Bridge.exe dist/Media-Bridge-${{ matrix.platform }}.exe
+            mv dist/Media-Bridge.exe dist/Media-Bridge-${{ matrix.platform }}${{ matrix.ext }}
           else
-            mv dist/Media-Bridge dist/Media-Bridge-${{ matrix.platform }}
-            chmod +x dist/Media-Bridge-${{ matrix.platform }}
+            mv dist/Media-Bridge dist/Media-Bridge-${{ matrix.platform }}${{ matrix.ext }}
+            chmod +x dist/Media-Bridge-${{ matrix.platform }}${{ matrix.ext }}
           fi
         shell: bash
 
@@ -87,7 +89,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: media-bridge-${{ matrix.platform }}
-          path: dist/Media-Bridge-${{ matrix.platform }}*
+          path: dist/Media-Bridge-${{ matrix.platform }}${{ matrix.ext }}
 
       - name: Semantic Release
         if: matrix.os == 'windows-latest'
@@ -122,5 +124,7 @@ jobs:
             artifacts/media-bridge-windows/Media-Bridge-windows.exe
             artifacts/media-bridge-linux/Media-Bridge-linux
           generate_release_notes: true
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

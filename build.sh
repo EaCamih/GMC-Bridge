@@ -39,7 +39,7 @@ fi
 
 # Build with PyInstaller
 echo "Building with PyInstaller..."
-pyinstaller --noconfirm media-bridge.spec
+python -m PyInstaller --noconfirm media-bridge.spec
 
 # Rename executable
 echo "Renaming executable..."

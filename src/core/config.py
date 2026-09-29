@@ -21,21 +21,29 @@ class Config:
         config = configparser.ConfigParser()
         config['SERVER'] = {'Host': '127.0.0.1', 'Port': '5000'}
         
-        # Determine the executable/script directory
+        # Use user's AppData for settings (better for frozen executables)
+        # Falls back to project directory for development
         if getattr(sys, 'frozen', False):
-            exe_dir = os.path.dirname(sys.executable)
+            # For frozen executable, use AppData
+            config_dir = os.path.join(os.getenv('APPDATA', os.path.expanduser('~')), 'GMC-Bridge')
+            os.makedirs(config_dir, exist_ok=True)
+            ini_path = os.path.join(config_dir, 'settings.ini')
         else:
-            exe_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # Go up to the project root
-        project_root = os.path.dirname(os.path.dirname(exe_dir))
-        ini_path = os.path.join(project_root, 'settings.ini')
+            # For development, use project directory
+            # We're in src/core/config.py, so go up 3 levels to project root
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            ini_path = os.path.join(project_root, 'settings.ini')
         
         if os.path.exists(ini_path):
             config.read(ini_path)
         else:
-            with open(ini_path, 'w') as f:
-                config.write(f)
+            try:
+                with open(ini_path, 'w') as f:
+                    config.write(f)
+            except (PermissionError, IOError) as e:
+                # If we can't write to the file, use default settings
+                print(f"Warning: Could not write settings file: {e}")
+                print("Using default configuration")
         
         return config
     

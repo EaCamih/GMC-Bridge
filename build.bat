@@ -16,8 +16,10 @@ pip install -r requirements.txt
 
 echo.
 echo Generating icons...
-if exist "*.png" (
-    python scripts\create_icons.py *.png
+if exist "GMC-Bridge.png" (
+    python scripts\create_icons.py GMC-Bridge.png
+) else if exist "media-bridge.png" (
+    python scripts\create_icons.py media-bridge.png
 ) else (
     echo Warning: No PNG file found
     echo Please provide a PNG icon file in the project root
@@ -26,7 +28,7 @@ if exist "*.png" (
 
 echo.
 echo Building with PyInstaller...
-pyinstaller --noconfirm media-bridge.spec
+python -m PyInstaller --noconfirm media-bridge.spec
 
 echo.
 echo Renaming executable...
