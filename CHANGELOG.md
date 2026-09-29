@@ -3,6 +3,16 @@
 
 ### Bug Fixes
 
+* **ci:** pass tag_name to release step ([8a5da26](https://github.com/EaCamih/GMC-Bridge/commit/8a5da265ae530d6f977cb7a28f19312d8e7f8dad))
+* separate build and release jobs to include both executables ([90408e7](https://github.com/EaCamih/GMC-Bridge/commit/90408e7a4c373865bf654445989a3b80d2cf8698))
+* trigger release ([81be39e](https://github.com/EaCamih/GMC-Bridge/commit/81be39edcbf54547f45488c0de9901d4a9d588d4))
+* trigger release ([a891ba0](https://github.com/EaCamih/GMC-Bridge/commit/a891ba060db0b2eee1e54d3581d6b7fd6880b1f9))
+
+## [1.0.2](https://github.com/EaCamih/GMC-Bridge/compare/v1.0.1...v1.0.2) (2026-09-29)
+
+
+### Bug Fixes
+
 * separate build and release jobs to include both executables ([90408e7](https://github.com/EaCamih/GMC-Bridge/commit/90408e7a4c373865bf654445989a3b80d2cf8698))
 
 ## [1.0.1](https://github.com/EaCamih/GMC-Bridge/compare/v1.0.0...v1.0.1) (2026-09-29)
