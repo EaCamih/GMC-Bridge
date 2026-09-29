@@ -6,8 +6,11 @@ Pillow
 plyer
 
 # Windows-specific dependencies (requires Visual Studio build tools)
-# winsdk; platform_system == 'Windows'
+# Install with: pip install winsdk
+# winsdk
 
-# Linux-specific dependencies
-dbus-python; platform_system == 'Linux'
+# Linux-specific dependencies (require system libraries)
+# Install system libs first: sudo apt-get install libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0
+# Using older dbus-python version for better compatibility
+dbus-python==1.2.18; platform_system == 'Linux'
 pygobject; platform_system == 'Linux'

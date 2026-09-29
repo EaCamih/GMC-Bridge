@@ -33,7 +33,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
@@ -49,9 +49,11 @@ jobs:
             # If winsdk fails to install, the app will still work with limited functionality
             pip install winsdk || echo "winsdk installation failed, continuing without it"
           else
-            pip install -r requirements.txt
+            # Install system dependencies first
             sudo apt-get update
-            sudo apt-get install -y libgirepository1.0-dev gir1.2-gtk-3.0
+            sudo apt-get install -y libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0
+            # Then install Python dependencies
+            pip install -r requirements.txt
           fi
         shell: bash
 

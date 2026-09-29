@@ -6,7 +6,7 @@
   **Global Media Control - Cross-platform Media Bridge**
   
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+  [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
   [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)](https://github.com/yourusername/GMC-Bridge)
   [![Semantic Release](https://img.shields.io/badge/semantic--release-auto.svg)](https://github.com/semantic-release/semantic-release)
 </div>
@@ -423,12 +423,13 @@ GMC-Bridge/
 
 ### Prerequisites
 
-- Python 3.11+
+- Python 3.12+
 - Platform-specific dependencies:
   - Windows: 
     - Basic: No additional system dependencies required
     - Full media support: `winsdk` (requires Visual Studio build tools)
-  - Linux: `libgirepository1.0-dev`, `gir1.2-gtk-3.0`
+  - Linux: `libdbus-1-dev`, `libgirepository-1.0-dev`, `gir1.2-gtk-3.0`
+    - Install with: `sudo apt-get install libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0`
 
 ### Setup
 
