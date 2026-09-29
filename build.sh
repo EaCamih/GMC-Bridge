@@ -22,7 +22,7 @@ pip install -r requirements.txt
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     echo "Installing Linux system dependencies..."
     sudo apt-get update
-    sudo apt-get install -y libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0
+    sudo apt-get install -y libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0 libcairo2-dev
 fi
 
 # Generate icons
