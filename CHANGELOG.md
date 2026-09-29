@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/EaCamih/GMC-Bridge/compare/v1.0.1...v1.0.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* separate build and release jobs to include both executables ([90408e7](https://github.com/EaCamih/GMC-Bridge/commit/90408e7a4c373865bf654445989a3b80d2cf8698))
+
 ## [1.0.1](https://github.com/EaCamih/GMC-Bridge/compare/v1.0.0...v1.0.1) (2026-09-29)
 
 
