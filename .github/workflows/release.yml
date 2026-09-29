@@ -132,13 +132,13 @@ jobs:
 
       - name: Create Release
         if: steps.semantic.outputs.new_release_published == 'true'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.semantic.outputs.new_release_version }}
           files: |
             artifacts/media-bridge-windows/Media-Bridge-windows.exe
             artifacts/media-bridge-linux/Media-Bridge-linux
           generate_release_notes: true
-          draft: false
-          prerelease: false
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
