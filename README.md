@@ -429,7 +429,7 @@ GMC-Bridge/
     - Basic: No additional system dependencies required
     - Full media support: `winsdk` (requires Visual Studio build tools)
   - Linux: `libdbus-1-dev`, `libgirepository-1.0-dev`, `gir1.2-gtk-3.0`
-    - Install with: `sudo apt-get install libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0`
+    - Install with: `sudo apt-get install libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0 libcairo2-dev`
 
 ### Setup
 
@@ -561,7 +561,7 @@ When you push to `main`:
 **Issue: Application won't start**
 - Install required system dependencies:
   ```bash
-  sudo apt-get install libgirepository1.0-dev gir1.2-gtk-3.0
+  sudo apt-get install libgirepository1.0-dev gir1.2-gtk-3.0 libcairo2-dev
   ```
 - Check that D-Bus session is running
 

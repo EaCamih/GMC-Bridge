@@ -10,7 +10,8 @@ plyer
 # winsdk
 
 # Linux-specific dependencies (require system libraries)
-# Install system libs first: sudo apt-get install libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0
+# Install system libs first: sudo apt-get install libdbus-1-dev libgirepository1.0-dev gir1.2-gtk-3.0 libcairo2-dev
 # Using older dbus-python version for better compatibility
 dbus-python==1.2.18; platform_system == 'Linux'
-pygobject; platform_system == 'Linux'
+# pygobject 3.50.x is the last series that builds against libgirepository1.0-dev on Ubuntu 24.04
+pygobject<3.51; platform_system == 'Linux'
