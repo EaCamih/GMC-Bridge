@@ -1,0 +1,122 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            platform: windows
+            icon: media-bridge.ico
+          - os: ubuntu-latest
+            platform: linux
+            icon: media-bridge.png
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+
+      - name: Install platform-specific dependencies
+        run: |
+          if [ "${{ matrix.platform }}" = "windows" ]; then
+            pip install -r requirements.txt
+            # Note: winsdk requires Visual Studio build tools
+            # The GitHub Actions Windows runner includes these tools
+            # If winsdk fails to install, the app will still work with limited functionality
+            pip install winsdk || echo "winsdk installation failed, continuing without it"
+          else
+            pip install -r requirements.txt
+            sudo apt-get update
+            sudo apt-get install -y libgirepository1.0-dev gir1.2-gtk-3.0
+          fi
+        shell: bash
+
+      - name: Create icons
+        run: |
+          if ls *.png 1> /dev/null 2>&1; then
+            # Use the first PNG file found
+            png_file=$(ls *.png | head -n 1)
+            python scripts/create_icons.py "$png_file"
+          else
+            echo "Warning: No PNG file found, building without icons"
+            echo "To include icons, add a PNG file to the project root"
+          fi
+        shell: bash
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --noconfirm media-bridge.spec
+
+      - name: Rename executable
+        run: |
+          if [ "${{ matrix.platform }}" = "windows" ]; then
+            mv dist/Media-Bridge.exe dist/Media-Bridge-${{ matrix.platform }}.exe
+          else
+            mv dist/Media-Bridge dist/Media-Bridge-${{ matrix.platform }}
+            chmod +x dist/Media-Bridge-${{ matrix.platform }}
+          fi
+        shell: bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: media-bridge-${{ matrix.platform }}
+          path: dist/Media-Bridge-${{ matrix.platform }}*
+
+      - name: Semantic Release
+        if: matrix.os == 'windows-latest'  # Only run on one platform to avoid duplicate releases
+        uses: cycjimmy/semantic-release-action@v4
+        id: semantic
+        with:
+          semantic_version: 23
+          extra_plugins: |
+            @semantic-release/git
+            @semantic-release/changelog
+            @semantic-release/exec
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com
+
+      - name: Download all artifacts
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/media-bridge-windows/Media-Bridge-windows.exe
+            artifacts/media-bridge-linux/Media-Bridge-linux
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

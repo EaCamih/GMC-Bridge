@@ -1,0 +1,28 @@
+{
+  "name": "media-bridge",
+  "version": "1.0.0",
+  "description": "Cross-platform media bridge REST API",
+  "main": "media_bridge.py",
+  "scripts": {
+    "test": "python media_bridge.py",
+    "build": "python build.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/GMC-Bridge.git"
+  },
+  "keywords": [
+    "media",
+    "smtc",
+    "mpris",
+    "rest-api",
+    "cross-platform"
+  ],
+  "author": "GMC-Bridge",
+  "license": "MIT",
+  "devDependencies": {
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^6.0.3"
+  }
+}

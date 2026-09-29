@@ -1,0 +1,13 @@
+flask
+flask-cors
+psutil
+pystray
+Pillow
+plyer
+
+# Windows-specific dependencies (requires Visual Studio build tools)
+# winsdk; platform_system == 'Windows'
+
+# Linux-specific dependencies
+dbus-python; platform_system == 'Linux'
+pygobject; platform_system == 'Linux'
