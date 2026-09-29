@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -91,8 +91,22 @@ jobs:
           name: media-bridge-${{ matrix.platform }}
           path: dist/Media-Bridge-${{ matrix.platform }}${{ matrix.ext }}
 
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Semantic Release
-        if: matrix.os == 'windows-latest'
         uses: cycjimmy/semantic-release-action@v4
         id: semantic
         with:
