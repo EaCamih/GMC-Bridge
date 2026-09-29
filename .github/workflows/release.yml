@@ -90,11 +90,11 @@ jobs:
           path: dist/Media-Bridge-${{ matrix.platform }}*
 
       - name: Semantic Release
-        if: matrix.os == 'windows-latest'  # Only run on one platform to avoid duplicate releases
+        if: matrix.os == 'windows-latest'
         uses: cycjimmy/semantic-release-action@v4
         id: semantic
         with:
-          semantic_version: 23
+          semantic_version: 24
           extra_plugins: |
             @semantic-release/git
             @semantic-release/changelog
