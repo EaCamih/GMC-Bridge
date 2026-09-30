@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/EaCamih/GMC-Bridge/compare/v1.0.2...v1.1.0) (2026-09-30)
+
+
+### Features
+
+* **media:** add remote artwork support and tray browser fallback ([26c9934](https://github.com/EaCamih/GMC-Bridge/commit/26c9934c2d8fd0bea2a729a36a34e29163b53fcb))
+
 ## [1.0.2](https://github.com/EaCamih/GMC-Bridge/compare/v1.0.1...v1.0.2) (2026-09-29)
 
 
