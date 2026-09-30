@@ -2,6 +2,7 @@
 
 import os
 import platform
+import subprocess
 import webbrowser
 import pystray
 from PIL import Image
@@ -47,6 +48,19 @@ class TrayIcon:
             # Fallback if icon not found
             return Image.new('RGB', (64, 64), color='blue')
     
+    def _open_url(self, url: str):
+        """Open URL in the default browser"""
+        try:
+            if platform.system() == "Linux":
+                subprocess.Popen(['xdg-open', url])
+                return
+            webbrowser.open(url)
+        except Exception:
+            try:
+                webbrowser.open(url)
+            except Exception:
+                pass
+
     def _create_menu(self):
         """Create tray icon menu"""
         return pystray.Menu(
@@ -58,11 +72,11 @@ class TrayIcon:
             pystray.Menu.SEPARATOR,
             pystray.MenuItem(
                 "View Data (JSON)",
-                lambda: webbrowser.open(f"http://{self.config.display_host}:{self.config.port}/now-playing")
+                lambda: self._open_url(f"http://{self.config.display_host}:{self.config.port}/now-playing")
             ),
             pystray.MenuItem(
                 "View Active Sessions",
-                lambda: webbrowser.open(f"http://{self.config.display_host}:{self.config.port}/sessions")
+                lambda: self._open_url(f"http://{self.config.display_host}:{self.config.port}/sessions")
             ),
             pystray.Menu.SEPARATOR,
             pystray.MenuItem(

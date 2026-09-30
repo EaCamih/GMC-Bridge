@@ -18,6 +18,11 @@ class APIServer:
         self.port = port
         self.app = Flask(__name__)
         CORS(self.app)
+
+        @self.app.after_request
+        def add_private_network_headers(response):
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+            return response
         
         # Initialize media engine based on platform
         if platform.system() == "Windows":

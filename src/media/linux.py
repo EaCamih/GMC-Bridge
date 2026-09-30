@@ -3,6 +3,8 @@
 import os
 import datetime
 import platform
+import urllib.request
+from urllib.parse import unquote
 from typing import Dict, List, Any, Optional
 from .base import MediaEngineBase
 
@@ -124,10 +126,19 @@ class LinuxMediaEngine(MediaEngineBase):
         except:
             position_ms = 0
         
+        duration_ms = 0
+        try:
+            metadata = player_properties.Get('org.mpris.MediaPlayer2.Player', 'Metadata')
+            length_us = metadata.get('mpris:length')
+            if length_us:
+                duration_ms = int(length_us / 1000)
+        except:
+            pass
+        
         return {
-            "EndTime": 0,  # MPRIS doesn't always provide this
+            "EndTime": duration_ms,
             "LastUpdatedTime": datetime.datetime.utcnow().isoformat(),
-            "MaxSeekTime": 0,
+            "MaxSeekTime": duration_ms,
             "MinSeekTime": 0,
             "Position": position_ms,
             "StartTime": 0
@@ -170,17 +181,41 @@ class LinuxMediaEngine(MediaEngineBase):
         
         return media_data
     
+    def _download_artwork(self, request) -> Optional[bytes]:
+        import ssl
+        try:
+            with urllib.request.urlopen(request, timeout=5) as response:
+                return response.read()
+        except Exception:
+            context = ssl.create_default_context()
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            with urllib.request.urlopen(request, timeout=5, context=context) as response:
+                return response.read()
+
     def _process_artwork(self, artwork_url: str, media_data: Dict) -> Optional[str]:
-        """Process artwork from MPRIS file URL"""
+        """Process artwork from MPRIS file or HTTP URL"""
         try:
             if artwork_url.startswith('file://'):
-                artwork_path = artwork_url[7:]
-                if os.path.exists(artwork_path):
-                    with open(artwork_path, 'rb') as f:
-                        img_data = f.read()
-                    
-                    print(f"Processing new artwork for: {media_data['Artist']} - {media_data['Title']}")
-                    return self._cache_thumbnail(img_data)
+                artwork_path = unquote(artwork_url[7:])
+                if not os.path.exists(artwork_path):
+                    return None
+                with open(artwork_path, 'rb') as f:
+                    img_data = f.read()
+            elif artwork_url.startswith(('http://', 'https://')):
+                request = urllib.request.Request(
+                    artwork_url,
+                    headers={'User-Agent': 'MediaBridge/1.0', 'Accept': 'image/*'}
+                )
+                img_data = self._download_artwork(request)
+            else:
+                return None
+
+            if not img_data:
+                return None
+
+            print(f"Processing new artwork for: {media_data['Artist']} - {media_data['Title']}")
+            return self._cache_thumbnail(img_data)
         except Exception as e:
             print(f"Error processing artwork: {e}")
             return None

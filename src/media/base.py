@@ -30,6 +30,20 @@ class MediaEngineBase(abc.ABC):
         self.last_execution_time = current_time
         return False
     
+    def _detect_image_mime(self, img_data: bytes) -> str:
+        """Detect image mime type from file signature"""
+        if img_data.startswith(b'\x89PNG\r\n\x1a\n'):
+            return 'image/png'
+        if img_data.startswith(b'\xff\xd8\xff'):
+            return 'image/jpeg'
+        if img_data.startswith(b'GIF8'):
+            return 'image/gif'
+        if img_data.startswith(b'RIFF') and img_data[8:12] == b'WEBP':
+            return 'image/webp'
+        if img_data.startswith(b'BM'):
+            return 'image/bmp'
+        return 'image/jpeg'
+
     def _cache_thumbnail(self, img_data: bytes) -> str:
         """Cache thumbnail and return base64 data URI"""
         img_hash = hashlib.md5(img_data).hexdigest()
@@ -39,7 +53,8 @@ class MediaEngineBase(abc.ABC):
             return self.thumb_cache[img_hash]
         
         encoded_img = base64.b64encode(img_data).decode('utf-8')
-        thumb_url = f"data:image/jpeg;base64,{encoded_img}"
+        mime = self._detect_image_mime(img_data)
+        thumb_url = f"data:{mime};base64,{encoded_img}"
         self.thumb_cache[img_hash] = thumb_url
         
         if len(self.thumb_cache) > self.MAX_CACHE_SIZE:
